@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface HeaderProps { //O nome certo é atributo, mas também poderia ser propriedade.
     title: string; //obrigatória
@@ -11,12 +11,13 @@ interface HeaderProps { //O nome certo é atributo, mas também poderia ser prop
 estados = informações guardadas pelo componente.
 */
 const Header: React.FC<HeaderProps> = (props) => {
-    let ctr = 1;
+    const [ctr, setCtr] = useState(0); //   :[number, função pra atualizar valor do estado]
+    /*Os estados são "imutáveis" no sentido de que não podemos alterá-los diretamente; 
+    precisamos criar um novo valor e associá-lo ao estado.*/
 
     var handleButtonClick = function handleButtonclick () {
-        console.log(ctr++); 
-        /*O contador vai atualizar, mas o h1 não. 
-        Vamos usar o estado de componentes do React para consertar isso.*/
+        setCtr(ctr+1); 
+        /*Note que ctr em si não é atualizado!*/
     }
 
     return (
