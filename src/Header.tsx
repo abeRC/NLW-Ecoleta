@@ -1,3 +1,8 @@
+/**********
+ * LEGACY
+ *********/
+
+
 import React, { useState } from "react";
 
 interface HeaderProps { //O nome certo é atributo, mas também poderia ser propriedade.
@@ -8,16 +13,16 @@ interface HeaderProps { //O nome certo é atributo, mas também poderia ser prop
 /*FC = Function Component 
 É um genérico que serve para permitir que um componente receba atributos pelo HTML.
 
-estados = informações guardadas pelo componente.
+estados = informações guardadas pelo componente que podem ser acessadas "em tempo real".
 */
+
 const Header: React.FC<HeaderProps> = (props) => {
     const [ctr, setCtr] = useState(0); //   :[number, função pra atualizar valor do estado]
     /*Os estados são "imutáveis" no sentido de que não podemos alterá-los diretamente; 
     precisamos criar um novo valor e associá-lo ao estado.*/
 
     var handleButtonClick = function handleButtonclick () {
-        setCtr(ctr+1); 
-        /*Note que ctr em si não é atualizado!*/
+        setCtr(ctr+1); /*Note que ctr em si não é atualizado!*/
     }
 
     return (
