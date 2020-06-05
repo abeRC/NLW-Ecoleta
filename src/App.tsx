@@ -13,7 +13,7 @@ To run: yarn batata*/
 function App() {
     return (
         <div>
-            <Header/>
+            <Header title="Hello world"/>
             <h1>Conteúdo da Aplicação</h1>
         </div>
     );
