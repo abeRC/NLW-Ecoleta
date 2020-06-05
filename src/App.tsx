@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import Home from "./pages/home/"; //O React procura por index.tsx por padrão.
+
+import Routes from "./routes";
+
 import './App.css'; //Para usar a stylesheet. 
-//Não usamos <link> para isso e, como vamos pegar o arquivo bruto, não rpecisamos do from.
+//Não usamos <link> para a stylesheet e, como vamos pegar o arquivo bruto, não precisamos do from.
 
 /*Escrever HTML (sintaxe de XML, na verdade) dentro do JavaScript funciona por causa de JSX.
 Para usar TypeScript com JSX, o arquivo deve ter extensão .tsx.
@@ -18,7 +20,7 @@ To run: yarn batata*/
 
 function App() {
     return (
-        <Home />
+        <Routes />
     );
 }
 
