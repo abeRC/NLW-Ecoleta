@@ -10,6 +10,7 @@ IMPORTANTE 2: Você precisa importar o React em todos os arquivos, mesmo que nã
 
 To run: yarn batata*/
 
+
 function App() {
     return (
         <div>
