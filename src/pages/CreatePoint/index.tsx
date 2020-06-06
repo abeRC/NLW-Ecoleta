@@ -18,11 +18,16 @@ interface IBGEUFResponse {
 	sigla: string; /*Só precisamos colocar o que vamos usar. */
 }
 
+interface IBGEcityResponse {
+	nome: string; /*Só precisamos colocar o que vamos usar. */
+}
+
 const CreatePoint = () => {
 	/*Sempre usamos estados quando queremos guardar alguma informação sobre/para algum componente.*/
 	const [items, setItems] = useState<Array<Item>>([]); 
 	const [ufs, setUfs] = useState<Array<string>>([]);
 	const [selectedUf, setSelectedUf] = useState("0");
+	const [cities, setCities] = useState<Array<string>>([]);
 	
 	/*Chamada toda vez que o usuário mudar a UF selecionada.
 	Precisamos dizer para o ChangeEvent que tipo de elemento causou a mudança.*/
@@ -40,16 +45,27 @@ const CreatePoint = () => {
 
 	/*Usa a API de localidades do IBGE para obter uma lista de UF.*/
 	useEffect(() => {
-		axios.get<IBGEUFResponse[]>("https://servicodados.ibge.gov.br/api/v1/localidades/estados/").then(response => {
-			const ufInitials = response.data.map( uf => uf.sigla);
-			setUfs(ufInitials);
+		axios
+			.get<IBGEUFResponse[]>("https://servicodados.ibge.gov.br/api/v1/localidades/estados/")
+			.then(response => {
+				const ufInitials = response.data.map( uf => uf.sigla);
+
+				setUfs(ufInitials);
 		});
 	}, []);
 
 	/*Usa a API de localidades do IBGE para obter a lista de municípios de um dado estado.
 	Isso precisa ser feito toda vez que um estado diferente for selecionado.*/
 	useEffect( () => {
-		console.log("nova UF: "+selectedUf);
+		if (selectedUf === "0") { 
+			return; /*Não fazer nada se estiver no 'Selecione um estado'. */
+		}
+		axios
+			.get<IBGEcityResponse[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`)
+			.then( response => {
+				const cityNames = response.data.map( city => city.nome);
+				setCities(cityNames);
+			});
 	}, [selectedUf]);
 	/************************************ 
 	(axios e conversando com a API)
@@ -58,9 +74,10 @@ const CreatePoint = () => {
 	de alguma forma. Também não é legal deixar isso fora do componente, porque é algo intrínseco a ele.
 
 	(useEffect)
-	1o parâmetro: qual função executar*; 
-	2o parâmetro: quando executar = quando as variáveis especificadas mudarem
-	Se o 2o parâmetro for [], isso só será executado uma vez.
+	1o parâmetro: qual função executar; 
+	2o parâmetro: quais variáveis para vigiar 
+	(o 1o parâmetro será chamado toda vez que essas variáveis mduarem)
+	Se o 2o parâmetro for [], o 1o parâmetro só será executado uma vez.
 	
 	(ATENÇÃO)
 	Sempre que criamos um estado com arrays ou objetos (coisa mutáveis), precisamos informar
@@ -151,9 +168,10 @@ const CreatePoint = () => {
 							<select 
 								name="estado" 
 								id="estado" 
-								value={selectedUf} 
+								value={selectedUf}
 								onChange={handleSelectedUf}
 							>
+							{/*NOTA: value é desnecessário? */} 
 								<option value="0">Selecione um estado.</option>
 								{ufs.map( uf => (
 									<option value={uf} key={uf}>{uf}</option>
@@ -164,6 +182,9 @@ const CreatePoint = () => {
 							<label htmlFor="cidade">Cidade</label>
 							<select name="cidade" id="cidade">
 								<option value="0">Selecione uma cidade.</option>
+								{cities.map( city => (
+									<option value={city} key={city}>{city}</option>
+								))}
 							</select>
 						</div>
 					</div>
