@@ -140,7 +140,7 @@
 
 #page-create-point form .leaflet-container {
   width: 100%;
-  height: 350px;
+  height: 350px; /*Não esqueça disso pelo amor de tudo que é bom.*/
   border-radius: 8px;
   margin-bottom: 24px;
 }
@@ -200,4 +200,12 @@
 .items-grid li.selected {
   background: #E1FAEC;
   border: 2px solid #34CB79;
+}
+
+.Map {
+  height: 400px;
+}
+
+Map {
+  height: 400px;
 }
