@@ -1,6 +1,7 @@
-import React, { useEffect, useState, ChangeEvent } from "react";
+import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { Map, TileLayer, Marker } from "react-leaflet"
+import { LeafletMouseEvent } from "leaflet";
 import api from "../../services/api";
 import axios from "axios";
 
@@ -25,10 +26,23 @@ interface IBGEcityResponse {
 const CreatePoint = () => {
 	/*Sempre usamos estados quando queremos guardar alguma informação sobre/para algum componente.*/
 	const [items, setItems] = useState<Array<Item>>([]); 
+
 	const [ufs, setUfs] = useState<Array<string>>([]);
 	const [selectedUf, setSelectedUf] = useState("0");
 	const [cities, setCities] = useState<Array<string>>([]);
 	const [selectedCity, setSelectedCity] = useState("0");
+
+	// eslint-disable-next-line
+	const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
+	const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
+
+	const [selectedItems, setSelectedItems] = useState<number[]>([]);
+
+	const [formData, setFormData] = useState({
+		name: "",
+		email: "",
+		whatsapp: ""
+	});
 	
 	/*Chamada toda vez que o usuário mudar a UF selecionada.
 	Precisamos dizer para o ChangeEvent que tipo de elemento causou a mudança.*/
@@ -38,11 +52,65 @@ const CreatePoint = () => {
 	}
 	/*Chamada toda vez que o usuário mudar a cidade selecionada.
 	Precisamos dizer para o ChangeEvent que tipo de elemento causou a mudança.*/
-	function handleSelectedCity(event: ChangeEvent<HTMLSelectElement>) {
+	function handleSelectedCity (event: ChangeEvent<HTMLSelectElement>) {
 		const city = event.target.value;
 		setSelectedCity(city);
 	}
 
+	/*Atualiza o marcador do mapa.*/
+	function handleMapClick (event: LeafletMouseEvent) {
+		setSelectedPosition([event.latlng.lat, event.latlng.lng]);
+	}
+
+	/*Atualiza o registro da informação que o usuário digitou. */
+	function handleInputChange (event: ChangeEvent<HTMLInputElement>) {
+		const { name, value } = event.target;
+		setFormData( { ...formData, [name]: value }); 
+		/*Olha a magia: a gente não pode substituir o objeto inteiro quando formos atualizar uma informação, 
+		então abrimos o formData, mudando o que precisa ser mudado (essa informação vem do event.target).
+		(E essa informação vai como uma variável em uma propriedade. Uau!)*/
+	}
+
+	/*Atualiza o item selecionado. */
+	function handleSelectedItem (id: number) {
+		const alreadySelectedThis = selectedItems.includes(id);
+
+		if (alreadySelectedThis) {
+			const filteredItems = selectedItems.filter( item => (item !== id) );
+			setSelectedItems(filteredItems);
+
+		} else {
+			setSelectedItems([ ...selectedItems, id ]); //spread operator 2 op pls nerf
+			/*Olha como o spread operator permite que agente reutilize o vetor! */
+		}
+	}
+
+	/*Faz a submissão dos dados.*/
+	async function handleSubmit (event: FormEvent) {
+		event.preventDefault();
+		/*O padrão para forms HTML é enviar o usuário para outra tela. 
+		Isto impede que a página recarregue.*/
+
+		const { name, email, whatsapp } = formData;
+		const estado = selectedUf;
+		const cidade = selectedCity;
+		const [latitude, longitude] = selectedPosition;
+		const items = selectedItems;
+
+		const data = {
+			name,
+			email,
+			whatsapp,
+			estado,
+			cidade,
+			latitude,
+			longitude,
+			items
+		};
+
+		await api.post("points", data);
+		alert("Ponto de coleta criado!");
+	}
 	/*Usa a listagem de items do nosso back-end.*/
 	useEffect(() => {
 		api.get("items").then(response => {
@@ -74,6 +142,18 @@ const CreatePoint = () => {
 				setCities(cityNames);
 			});
 	}, [selectedUf]);
+
+	/*Usa a API do navegador para acessar a localização atual do usuário.*/
+	useEffect( () => {
+		navigator.geolocation.getCurrentPosition( position => {
+			const { latitude, longitude } = position.coords;
+
+			setInitialPosition([latitude, longitude]);
+			console.log(position);
+		}, () =>{
+			console.info("secure? "+window.isSecureContext);
+			console.error("Failed to load current position. Is the server confgiured to use HTTPS?");});
+	}, []);
 	/************************************ 
 	(axios e conversando com a API)
 	Não podemos simplesmente colocar uma chamada 
@@ -100,7 +180,7 @@ const CreatePoint = () => {
 		<div id="page-create-point">
 			<header>
 				<img src={logo} alt="E-coleta" />
-				{/*Chaves para inserir JS.*/}
+				{/*Chaves são para inserir JS.*/}
 
 				{/*Queremos uma SPA, então, para não precisarmos recarregar a página, 
 					usamos o { Link } do react-router-dom. 
@@ -111,7 +191,8 @@ const CreatePoint = () => {
 				</Link>
 			</header>
 
-			<form>
+			<form onSubmit={handleSubmit} >
+				{/*Há várias formas de fazer a submissão, então é melhor deixar aqui.*/}
 				<h1>Cadastro do <br /> ponto de coleta</h1>
 
 				<fieldset>
@@ -127,6 +208,7 @@ const CreatePoint = () => {
 								type="text"
 								name="name"
 								id="name"
+								onChange={handleInputChange}
 							/>
 					</div>
 
@@ -138,6 +220,7 @@ const CreatePoint = () => {
 								type="text"
 								name="whatsapp"
 								id="whatsapp"
+								onChange={handleInputChange}
 							/>
 						</div>
 
@@ -147,6 +230,7 @@ const CreatePoint = () => {
 							type="email"
 							name="email"
 							id="email"
+							onChange={handleInputChange}
 						/>
 						</div>
 					</div>
@@ -160,13 +244,13 @@ const CreatePoint = () => {
 						<h2>Endereço</h2>
 						<span>Selecione o endereço no mapa.</span>
 					</legend>
-					
-					<Map center={[-23.5592411,-46.7318941]} zoom={17} height={400} >
+					{/*Fallback coordinates: [-23.5592411,-46.7318941] */}
+					<Map center={[-23.5592411,-46.7318941]} zoom={17} height={400} onClick={handleMapClick} >
 						<TileLayer 
 							attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 						/>
-						<Marker position={[-23.5592411,-46.7318941]} />
+						<Marker position={selectedPosition} />
 					</Map>
 
 					<div className="field-group">
@@ -209,12 +293,18 @@ const CreatePoint = () => {
 					</legend>
 
 					<ul className="items-grid">
-						{items.map(item => (
-							<li key={item.id}>
+						{items.map( item => (
+							<li 
+							key={item.id} 
+							onClick={ () => handleSelectedItem(item.id) }
+							className={selectedItems.includes(item.id) ? "selected" : ""} >
 								{/*Warning: Each child in a list should have a unique key prop. 
 									No React, sempre que interagimos com um array, o primeiro elemento HTML
 									sempre deve ter um atributo key indicando um identificador único para o elemento.
 									Isso permite que ele seja encontrado mais rapidamente quando for necessário atualizar esse elemento.
+
+									Outra coisa: não dá para fazer só onClick=handleSelectedItem(item.id) porque o
+									OnClick espera um objeto de função e ele vai pirar completamente se você tentar isso.
 									*/}
 								<img src={item.image_url} alt={item.title} />
 								<span>{item.title}</span>
