@@ -30,11 +30,13 @@ const Home = () => {
         </div>
         </div>
     ); 
-    /**********************************************************
-    OBS 1: Se fosse HTML mesmo, seria div class, mas class é uma palavra reservada, 
-    então não podemos usar isso.
-    OBS 2: Queremos uma SPA, então, para não precisarmos recarregar a página, usamos o { Link } do react-router-dom.
-    **********************************************************/
 }
+/**********************************************************
+OBS 1: Se fosse HTML mesmo, seria div class, mas class é uma palavra reservada, 
+então não podemos usar isso.
+OBS 2: Queremos uma SPA, então, para não precisarmos recarregar a página, 
+usamos o { Link } do react-router-dom. 
+Isso faz com que o CSS, JS, etc. sejam amntidos entre as telas.
+**********************************************************/
 
 export default Home;

@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             <button type="button" onClick={handleButtonClick}>aumentar</button>
         </header>
     ); /*Cuidado: parêntesis — não chaves — no return porque não é um objeto, é só uma quebra de linha.
-    Also: para colocar JavaScript no meio do HTML que está no meio do JavaScript, envolva-o com chaves.*/
+    Also: as chaves são para colocar JavaScript no meio do HTML que está no meio do JavaScript.*/
 }
 
 export default Header;
