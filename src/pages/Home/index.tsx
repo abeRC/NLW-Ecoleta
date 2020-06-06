@@ -1,7 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 import logo from "../../assets/logo.svg"; /*Todas as importações são por JS. */
 import "./styles.css";
 import { FiLogIn } from "react-icons/fi";
+
 
 const Home = () => {
     return (
@@ -15,18 +18,23 @@ const Home = () => {
                     <h1>Seu marketplace de coleta de resíduos.</h1>
                     <p>Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.</p>
                 
-                    <a href="/create-point">
+                    <Link to="/create-point">
                         <span>
                             <FiLogIn />
                         </span>
                         <strong>Cadastre um ponto de coleta.</strong>
-                    </a>
+                    </Link>
 
 
                 </main>
         </div>
         </div>
-    ); /*Se fosse HTML mesmo, seria div class, mas class é uma palavra reservada, então não podemos usar isso. */
+    ); 
+    /**********************************************************
+    OBS 1: Se fosse HTML mesmo, seria div class, mas class é uma palavra reservada, 
+    então não podemos usar isso.
+    OBS 2: Queremos uma SPA, então, para não precisarmos recarregar a página, usamos o { Link } do react-router-dom.
+    **********************************************************/
 }
 
 export default Home;
