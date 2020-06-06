@@ -125,7 +125,7 @@ const CreatePoint = () => {
 			.then(response => {
 				const ufInitials = response.data.map( uf => uf.sigla);
 
-				setUfs(ufInitials);
+				setUfs(ufInitials.sort());
 		});
 	}, []);
 
