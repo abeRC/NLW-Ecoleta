@@ -15,8 +15,18 @@ const Routes = () => {
 	return (
 		<NavigationContainer>
 			{/*É tipo o BrowserRouter do Express.*/}
-			<AppStack.Navigator>
-				{/*component é o componente a ser exibido na tela quando a rota estiver ativa. */}
+			<AppStack.Navigator 
+				headerMode="none"
+				screenOptions={{ 
+					cardStyle: {
+						backgroundColor: "#f0f0f5"
+					}
+				}}
+			>
+			{/*headerMode é uma barrinha de navegação que vem por padrão;
+				chaves para inserir JS e chaves para indicar objeto.
+				cardStyle é para colocar uma propriedade para todas as telas;
+				component é o componente a ser exibido na tela quando a rota estiver ativa. */}
 				<AppStack.Screen name="Home" component={Home} />
 				<AppStack.Screen name="Points" component={Points} />
 				<AppStack.Screen name="Detail" component={Detail} />
