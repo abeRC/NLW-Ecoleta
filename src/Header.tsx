@@ -5,6 +5,7 @@
 
 import React, { useState } from "react";
 
+/*Precisamos dessa interface para declarar os tipos das propriedades que o nosso componente pode ter. */
 interface HeaderProps { //O nome certo é atributo, mas também poderia ser propriedade.
     title: string; //obrigatória
     //title?: string; //opcional

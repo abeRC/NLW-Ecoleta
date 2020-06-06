@@ -5,7 +5,7 @@ import Routes from "./routes";
 import './App.css'; //Para usar a stylesheet. 
 //Não usamos <link> para a stylesheet e, como vamos pegar o arquivo bruto, não precisamos do from.
 
-/*Escrever HTML (sintaxe de XML, na verdade) dentro do JavaScript funciona por causa de JSX.
+/*Escrever HTML (sintaxe de XML, na verdade) dentro do JavaScript só funciona por causa de JSX.
 Para usar TypeScript com JSX, o arquivo deve ter extensão .tsx.
 
 IMPORTANTE 1: Todo componente (App, Header) precisa começar com maiúsculas para não conflitar com tags HTML.

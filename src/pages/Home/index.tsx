@@ -7,36 +7,35 @@ import { FiLogIn } from "react-icons/fi";
 
 
 const Home = () => {
-    return (
-        <div id="page-home">
-        <div className="content">
-                <header>
-                    <img src={logo} alt="E-coleta"/>
-                </header>
+	return (
+		<div id="page-home">
+		{/*Se fosse HTML mesmo, seria div class, mas class é uma palavra reservada, 
+		então não podemos usar isso.*/}
+		<div className="content">
+				<header>
+					<img src={logo} alt="E-coleta"/>
+				</header>
 
-                <main>
-                    <h1>Seu marketplace de coleta de resíduos.</h1>
-                    <p>Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.</p>
-                
-                    <Link to="/create-point">
-                        <span>
-                            <FiLogIn />
-                        </span>
-                        <strong>Cadastre um ponto de coleta.</strong>
-                    </Link>
+				<main>
+					<h1>Seu marketplace de coleta de resíduos.</h1>
+					<p>Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.</p>
+					
+					{/*Queremos uma SPA, então, para não precisarmos recarregar a página, 
+						usamos o { Link } do react-router-dom. 
+						Isso faz com que o CSS, JS, etc. sejam amntidos entre as telas.*/}
+					<Link to="/create-point">
+						<span>
+							<FiLogIn />
+						</span>
+						<strong>Cadastre um ponto de coleta.</strong>
+					</Link>
 
 
-                </main>
-        </div>
-        </div>
-    ); 
+				</main>
+		</div>
+		</div>
+	); 
 }
-/**********************************************************
-OBS 1: Se fosse HTML mesmo, seria div class, mas class é uma palavra reservada, 
-então não podemos usar isso.
-OBS 2: Queremos uma SPA, então, para não precisarmos recarregar a página, 
-usamos o { Link } do react-router-dom. 
-Isso faz com que o CSS, JS, etc. sejam amntidos entre as telas.
-**********************************************************/
+
 
 export default Home;
