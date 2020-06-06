@@ -9,7 +9,7 @@ app.use(express.json()); //IMPORTANTE: .json() é uma função; não esqueça do
 app.use(routes);
 app.use("/uploads", express.static(path.resolve(__dirname,"..", "uploads"))); //para servir recursos estáticos como imagens
 app.use(cors({
-    origin: "http://localhost:3000"
+    origin: ["http://localhost:3000", "https://localhost:3000"]
 }));
 /*CORS = Cross-origin resource sharing
 Define os domínios que terão acesso à nossa aplicação. Daria para definir um objeto com origin para controlar isso.

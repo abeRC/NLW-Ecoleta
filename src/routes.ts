@@ -9,7 +9,7 @@ const pointsController = new PointsController();
 const itemsController = new ItemsController();
 
 routes.use(cors({
-    origin: "http://localhost:3000"
+    origin: ["http://localhost:3000", "https://localhost:3000"]
 })); 
 /*CORS = Cross-origin resource sharing
 Define os domínios que terão acesso à nossa aplicação. Daria para definir um objeto com origin para controlar isso.
