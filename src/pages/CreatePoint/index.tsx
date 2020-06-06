@@ -28,12 +28,19 @@ const CreatePoint = () => {
 	const [ufs, setUfs] = useState<Array<string>>([]);
 	const [selectedUf, setSelectedUf] = useState("0");
 	const [cities, setCities] = useState<Array<string>>([]);
+	const [selectedCity, setSelectedCity] = useState("0");
 	
 	/*Chamada toda vez que o usuário mudar a UF selecionada.
 	Precisamos dizer para o ChangeEvent que tipo de elemento causou a mudança.*/
 	function handleSelectedUf(event: ChangeEvent<HTMLSelectElement>) {
 		const uf = event.target.value;
 		setSelectedUf(uf);
+	}
+	/*Chamada toda vez que o usuário mudar a cidade selecionada.
+	Precisamos dizer para o ChangeEvent que tipo de elemento causou a mudança.*/
+	function handleSelectedCity(event: ChangeEvent<HTMLSelectElement>) {
+		const city = event.target.value;
+		setSelectedCity(city);
 	}
 
 	/*Usa a listagem de items do nosso back-end.*/
@@ -171,7 +178,7 @@ const CreatePoint = () => {
 								value={selectedUf}
 								onChange={handleSelectedUf}
 							>
-							{/*NOTA: value é desnecessário? */} 
+							{/*NOTA: value é realmente necessário? */} 
 								<option value="0">Selecione um estado.</option>
 								{ufs.map( uf => (
 									<option value={uf} key={uf}>{uf}</option>
@@ -180,7 +187,12 @@ const CreatePoint = () => {
 						</div>
 						<div className="field">
 							<label htmlFor="cidade">Cidade</label>
-							<select name="cidade" id="cidade">
+							<select 
+								name="cidade" 
+								id="cidade"
+								value={selectedCity}
+								onChange={handleSelectedCity}
+							>
 								<option value="0">Selecione uma cidade.</option>
 								{cities.map( city => (
 									<option value={city} key={city}>{city}</option>
