@@ -1,7 +1,8 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { Map, TileLayer, Marker } from "react-leaflet"
 import api from "../../services/api";
+import axios from "axios";
 
 import "./styles.css";
 import logo from "../../assets/logo.svg";
@@ -13,16 +14,44 @@ interface Item {
 	image_url: string;
 }
 
-const CreatePoint = () => {
-	const [items, setItems] = useState<Array<Item>>([]); 
-	/*Sempre usamos estados quando queremos guardar alguma informação sobre/para algum componente.*/
+interface IBGEUFResponse {
+	sigla: string; /*Só precisamos colocar o que vamos usar. */
+}
 
+const CreatePoint = () => {
+	/*Sempre usamos estados quando queremos guardar alguma informação sobre/para algum componente.*/
+	const [items, setItems] = useState<Array<Item>>([]); 
+	const [ufs, setUfs] = useState<Array<string>>([]);
+	const [selectedUf, setSelectedUf] = useState("0");
+	
+	/*Chamada toda vez que o usuário mudar a UF selecionada.
+	Precisamos dizer para o ChangeEvent que tipo de elemento causou a mudança.*/
+	function handleSelectedUf(event: ChangeEvent<HTMLSelectElement>) {
+		const uf = event.target.value;
+		setSelectedUf(uf);
+	}
+
+	/*Usa a listagem de items do nosso back-end.*/
 	useEffect(() => {
 		api.get("items").then(response => {
 			setItems(response.data);
-		})
+		});
 	}, []);
-	/*
+
+	/*Usa a API de localidades do IBGE para obter uma lista de UF.*/
+	useEffect(() => {
+		axios.get<IBGEUFResponse[]>("https://servicodados.ibge.gov.br/api/v1/localidades/estados/").then(response => {
+			const ufInitials = response.data.map( uf => uf.sigla);
+			setUfs(ufInitials);
+		});
+	}, []);
+
+	/*Usa a API de localidades do IBGE para obter a lista de municípios de um dado estado.
+	Isso precisa ser feito toda vez que um estado diferente for selecionado.*/
+	useEffect( () => {
+		console.log("nova UF: "+selectedUf);
+	}, [selectedUf]);
+	/************************************ 
 	(axios e conversando com a API)
 	Não podemos simplesmente colocar uma chamada 
 	para a api (i.e., api.get) porque isso seria chamado toda vez que o componente for alterado
@@ -31,13 +60,17 @@ const CreatePoint = () => {
 	(useEffect)
 	1o parâmetro: qual função executar*; 
 	2o parâmetro: quando executar = quando as variáveis especificadas mudarem
-	Se o 2o parâmetro for [], isso só será executado 1 vez.
+	Se o 2o parâmetro for [], isso só será executado uma vez.
 	
 	(ATENÇÃO)
 	Sempre que criamos um estado com arrays ou objetos (coisa mutáveis), precisamos informar
 	manualmente o tipo da variável. 
 	Fazemos isso passando uma inferface como parâmetro genérico de useState.
-	*/
+	Para acessar os atributos de uf, precisamos fazer algo parecido:  
+	passar um parâmetro genérico para o axios.get, informando o tipo do valor de retorno.
+	Perceba que a resposta do IBGE contém mais informações do que só a sigla, 
+	mas o vlaor de retorno é uma string[].
+	*******************************************/
 
 	return (
 		<div id="page-create-point">
@@ -115,8 +148,16 @@ const CreatePoint = () => {
 					<div className="field-group">
 						<div className="field">
 							<label htmlFor="estado">Estado (UF)</label>
-							<select name="estado" id="estado">
+							<select 
+								name="estado" 
+								id="estado" 
+								value={selectedUf} 
+								onChange={handleSelectedUf}
+							>
 								<option value="0">Selecione um estado.</option>
+								{ufs.map( uf => (
+									<option value={uf} key={uf}>{uf}</option>
+								))}
 							</select>
 						</div>
 						<div className="field">
