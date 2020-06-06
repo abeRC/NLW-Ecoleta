@@ -1,17 +1,37 @@
 import React from "react";
-import { Text, View, Image, StyleSheet } from "react-native";
+import { Text, View, ImageBackground, Image, StyleSheet } from "react-native";
+import { RectButton } from "react-native-gesture-handler"
 
+import { Feather as Icon } from "@expo/vector-icons";
 
 const Home = () => {
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+      source={require("../../assets/home-background.png")} 
+      style={styles.container}
+      imageStyle={{ width: 274, height: 268 }}
+    >
+    {/*HomeBackground é tipo uma View, mas aceita um atributo de imagem.
+      imageStyle é só pra imagem; style é pro container.*/}
       <View style={styles.main}>
         <Image source={require("../../assets/logo.png")}></Image>
         {/*import não funciona por algum motivo*/}
         <Text style={styles.title}>Seu marketplace de coleta de resíduos</Text>
         <Text style={styles.description}>Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente</Text>
       </View>
-    </View>
+      <View style={styles.footer}>
+        <RectButton style={styles.button} onPress={ () => {} }>
+          <View style={styles.buttonIcon}>
+            <Text> 
+              <Icon name="arrow-right" color="#fff" size={24}></Icon>
+            </Text>
+          </View>
+          <Text style={styles.buttonText}>
+            Entrar
+          </Text>
+        </RectButton>
+      </View>
+    </ImageBackground>
   );
 }
 

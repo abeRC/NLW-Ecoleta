@@ -6,7 +6,8 @@ import Home from "./src/pages/Home";
 
 import { Roboto_400Regular, Roboto_500Medium } from "@expo-google-fonts/roboto";
 import { Ubuntu_700Bold, useFonts } from "@expo-google-fonts/ubuntu";
-
+/*Olha na internet pra ver como instalar expo-google-fonts 
+e react-navigation (e @react-navigation/stack) */
 
 /*Metro Bundler = programa que vigia modificações no código e manda um bundle
  (JS minificado) para ser utilizado em dispositivos móveis.
@@ -37,6 +38,9 @@ import { Ubuntu_700Bold, useFonts } from "@expo-google-fonts/ubuntu";
 	Você não pode retornar dois componentes soltos; ou você coloca uma View em volta 
 	(que produz um efeito) OU você usa uma tag fragment, 
 	representada por <>, que é uma tag sem conteúdo.
+
+	Nenhum texto pode ficar solto; todo texto precisa estar dentro de uma tag Text.
+	Se der erro mencionando isso, provavelmente há algum ; ou > soltos pelo código.
 
 	Há alguns bugzinhos aqui e ali, então, por exemplo, 
 	talvez você tenha que ir no localhost:19002 e apagar o dispositivo.
