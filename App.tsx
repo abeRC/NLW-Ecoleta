@@ -42,6 +42,8 @@ e react-navigation (e @react-navigation/stack) */
 	Nenhum texto pode ficar solto; todo texto precisa estar dentro de uma tag Text.
 	Se der erro mencionando isso, provavelmente há algum ; ou > soltos pelo código.
 
+	Sem suporte a svg pro padrão; precisa do react-native-svg.
+
 	Há alguns bugzinhos aqui e ali, então, por exemplo, 
 	talvez você tenha que ir no localhost:19002 e apagar o dispositivo.
 	*/
