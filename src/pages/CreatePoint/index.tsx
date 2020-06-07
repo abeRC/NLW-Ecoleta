@@ -162,7 +162,7 @@ const CreatePoint = () => {
 			console.log(position);
 		}, () =>{
 			console.info("secure? "+window.isSecureContext);
-			console.error("Failed to load current position. Is the server confgiured to use HTTPS?");});
+			console.error("Failed to load current position. Is the server configured to use HTTPS?");});
 	}, []);
 	/************************************ 
 	(axios e conversando com a API)
