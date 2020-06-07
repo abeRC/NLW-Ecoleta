@@ -1,44 +1,76 @@
-import React from "react";
-import { Text, View, ImageBackground, Image, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { Text, View, ImageBackground, Image, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { RectButton } from "react-native-gesture-handler"
 import { Feather as Icon } from "@expo/vector-icons";
 
+/*TODO: usar o react-native-picker-select e a API do IBGE pra fazer que nem a versão web.*/
+
 const Home = () => {
   const navigation = useNavigation();
 
   function handleNavigateToPoints () {
-    navigation.navigate("Points");
-  }
+    navigation.navigate("Points", {
+      uf,
+      city
+    });
+  } /*Enviamos para a tela dos pontos de coleta a informação do estado e cidade. */
+
+  const [uf, setUf] = useState("");
+  const [city, setCity] = useState("");
 
   return (
-    <ImageBackground 
-      source={require("../../assets/home-background.png")} 
-      style={styles.container}
-      imageStyle={{ width: 274, height: 268 }}
-    >
-    {/*ImageBackground é tipo uma View, mas aceita um atributo de imagem.
-      imageStyle é só pra imagem; style é pro container.*/}
-      <View style={styles.main}>
-        <Image source={require("../../assets/logo.png")}></Image>
-        {/*import não funciona por algum motivo*/}
-        <Text style={styles.title}>Seu marketplace de coleta de resíduos</Text>
-        <Text style={styles.description}>Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente</Text>
-      </View>
-      <View style={styles.footer}>
-        <RectButton style={styles.button} onPress={handleNavigateToPoints}>
-          <View style={styles.buttonIcon}>
-            <Text> 
-              <Icon name="arrow-right" color="#fff" size={24}></Icon>
-            </Text>
+    <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      {/*Essas tags de "Eu resolvo seus problemas!" sempre vão em volta de tudo.
+        E é estranho assim porque o behaviour só é encessário em IOS*/}
+      <ImageBackground 
+        source={require("../../assets/home-background.png")} 
+        style={styles.container}
+        imageStyle={{ width: 274, height: 268 }}
+      >
+      {/*ImageBackground é tipo uma View, mas aceita um atributo de imagem.
+        imageStyle é só pra imagem; style é pro container.*/}
+        <View style={styles.main}>
+          <Image source={require("../../assets/logo.png")}></Image>
+          {/*import não funciona por algum motivo; View em branco é para o texto subir junto quando abrimos o teclado*/}
+          <View>
+            <Text style={styles.title}>Seu marketplace de coleta de resíduos</Text>
+            <Text style={styles.description}>Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente</Text>
           </View>
-          <Text style={styles.buttonText}>
-            Entrar
-          </Text>
-        </RectButton>
-      </View>
-    </ImageBackground>
+        </View>
+        <View style={styles.footer}>
+          <TextInput 
+            style={styles.input}
+            placeholder="Digite o estado."
+            maxLength={2}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            value={uf}
+            onChangeText={setUf}
+          />
+          {/*É o mesmo que onChangeText={ text => {setUf(text);}}
+            E o legal é que isso já te dá o texto que mudou, diferente do HTML.*/}
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a cidade."
+            autoCorrect={false}
+            value={city}
+            onChangeText={setCity} 
+          />
+          <RectButton style={styles.button} onPress={handleNavigateToPoints}>
+            <View style={styles.buttonIcon}>
+              <Text> 
+                <Icon name="arrow-right" color="#fff" size={24}></Icon>
+              </Text>
+            </View>
+            <Text style={styles.buttonText}>
+              Entrar
+            </Text>
+          </RectButton>
+        </View>
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 }
 

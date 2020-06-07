@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from "react-native";
 import Constants from "expo-constants";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import { SvgUri } from "react-native-svg"; //para carregar um svg de um endereço externo
 import api from "../../services/api";
@@ -23,6 +23,11 @@ interface Point {
 }
 /*Só as informações que vamos utilizar! */
 
+interface Params {
+	uf: string,
+	city: string
+}
+
 const Points = () => {
 	/*Rotas*/
 	const navigation = useNavigation();
@@ -32,6 +37,9 @@ const Points = () => {
 	function handleNavigateToDetail (id: number) {
 		navigation.navigate("Detail",{ point_id: id }); /*o segundo parâmetro é para passar coisas para a próxima rota. */
 	}
+
+	const route = useRoute();
+	const routeParams = route.params as Params;
 
 	/*Atualiza o item selecionado. */
 	function handleSelectedItem (id: number) {
@@ -81,18 +89,19 @@ const Points = () => {
 		loadPosition();
 	}, [])
 
-	/*Fazemos uma listagem filtrada de pontos com aqueles query parameters */
+	/*Fazemos uma listagem filtrada de pontos (para uma cidade) com aqueles query parameters
+		toda vez que o usuário seleciona ou desseleciona um item.*/
 	useEffect( () => {
 		api.get("points", {
 			params: {
-				cidade: "São Paulo",
-				estado: "SP",
-				items: [1, 3, 6]
+				cidade: routeParams.city,
+				estado: routeParams.uf,
+				items: selectedItems
 			}
 		}).then( response => {
 			setPoints(response.data);
 		})
-	}, [])
+	}, [selectedItems])
 
 	return (
 		<>
