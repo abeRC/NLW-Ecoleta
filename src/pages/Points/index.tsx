@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from "react-native";
 import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import { SvgUri } from "react-native-svg"; //para carregar um svg de um endereço externo
 import api from "../../services/api";
+import * as Location from "expo-location";
 
 import { Feather as Icon } from "@expo/vector-icons";
 
@@ -41,6 +42,7 @@ const Points = () => {
 	/*state, setState*/
 	const [items, setItems] = useState<Item[]>([]); /*Sempre que armazenamos um vetor em um estado, precisamos informar o formato do vetor.*/
 	const [selectedItems, setSelectedItems] = useState<number[]>([]);
+	const [initialPosition, setinitialPosition] = useState<[number, number]>([0, 0]);
 
 	useEffect(() => {
 		api.get("items").then( response => {
@@ -51,6 +53,25 @@ const Points = () => {
 			setItems([{id: -1, title:"Network Error", image_url:""}])
 		})
 	}, []);
+
+	useEffect( () => {
+		async function loadPosition () {
+			const { status } = await Location.requestPermissionsAsync(); //Diz se o usuário deu permissão.
+
+			if (status != "granted") {
+				Alert.alert("Vaaaai, nunca te pedi nada! ;)");
+				return;
+			}
+
+			const location = await Location.getCurrentPositionAsync();
+
+			const { latitude, longitude } = location.coords;
+			console.log([latitude, longitude]);
+			setinitialPosition([latitude, longitude]);
+		}
+
+		loadPosition();
+	}, [])
 
 	return (
 		<>
@@ -66,10 +87,11 @@ const Points = () => {
 				<View style={styles.mapContainer}>
 					{/*O borderRadius só funciona para View.*/}
 					<MapView 
-						style={styles.map} 
+						style={styles.map}
+						loadingEnabled={initialPosition[0] == 0}
 						initialRegion={{ 
-							latitude: -23.5592411,
-							longitude: -46.7318941,
+							latitude: initialPosition[0],
+							longitude: initialPosition[1],
 							latitudeDelta: 0.020,
 							longitudeDelta: 0.020
 						 }}
