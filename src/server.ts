@@ -2,6 +2,7 @@ import express from 'express';
 import path from "path";
 import routes from "./routes";
 import cors from "cors";
+import { errors } from "celebrate";
 
 const app = express();
 
@@ -16,5 +17,7 @@ app.use(cors({
 Define os domínios que terão acesso à nossa aplicação. Daria para definir um objeto com origin para controlar isso.
 Se nao ativarmos isso, o nosso front-end nao tera como acessar o nosso back-end!
 (O front está no port 3000 e o back está no port 3333.)*/
+
+app.use(errors()); //Passa os errors para o front-end automaticamente.
 
 app.listen(3333);
