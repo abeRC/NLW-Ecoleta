@@ -1,9 +1,10 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Map, TileLayer, Marker } from "react-leaflet"
 import { LeafletMouseEvent } from "leaflet";
 import api from "../../services/api";
 import axios from "axios";
+import Dropzone from "../../components/Dropzone";
 
 import "./styles.css";
 import logo from "../../assets/logo.svg";
@@ -43,6 +44,9 @@ const CreatePoint = () => {
 		email: "",
 		whatsapp: ""
 	});
+	const [selectedFile, setSelectedFile] = useState<File>();
+
+	const history = useHistory(); /*Para redirecionar o usuário para a tela inicial. */
 	
 	/*Chamada toda vez que o usuário mudar a UF selecionada.
 	Precisamos dizer para o ChangeEvent que tipo de elemento causou a mudança.*/
@@ -97,19 +101,25 @@ const CreatePoint = () => {
 		const [latitude, longitude] = selectedPosition;
 		const items = selectedItems;
 
-		const data = {
-			name,
-			email,
-			whatsapp,
-			estado,
-			cidade,
-			latitude,
-			longitude,
-			items
-		};
+		const data = new FormData();
+			/*PROTIP: alt+shift+I pra ativar cursor tentáculo.
+				Daí você pode mexer/selecionar as coisas com ctrl/shift. */
+			data.append('name', name);
+			data.append('email', email);
+			data.append('whatsapp', whatsapp);
+			data.append('estado', estado);
+			data.append('cidade', cidade);
+			data.append('latitude', String(latitude));
+			data.append('longitude', String(longitude));
+			data.append('items', items.join(","));
+			
+			if (selectedFile) {
+				data.append('image', selectedFile);
+			}
 
 		await api.post("points", data);
 		alert("Ponto de coleta criado!");
+		history.push("/");
 	}
 	/*Usa a listagem de items do nosso back-end.*/
 	useEffect(() => {
@@ -194,6 +204,10 @@ const CreatePoint = () => {
 			<form onSubmit={handleSubmit} >
 				{/*Há várias formas de fazer a submissão, então é melhor deixar aqui.*/}
 				<h1>Cadastro do <br /> ponto de coleta</h1>
+
+				<Dropzone onFileUploaded={setSelectedFile} />
+				{/*Perceba que onFileUploaded é algo que nóis mesmos definimos. 
+				Na verdade estamos passando uma função a esse componente através de um atributo.*/}
 
 				<fieldset>
 					<legend>
