@@ -44,6 +44,10 @@ e react-navigation (e @react-navigation/stack) */
 
 	Sem suporte a svg pro padrão; precisa do react-native-svg.
 
+	Lembra do negócio de ter que colocar um atributo key na 1a tag dentro de um loop/iteração de HTML/JSX?
+	Então, no React native precisa ser uma string também..
+
+
 	Há alguns bugzinhos aqui e ali, então, por exemplo, 
 	talvez você tenha que ir no localhost:19002 e apagar o dispositivo.
 	*/

@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import { SvgUri } from "react-native-svg"; //para carregar um svg de um endereço externo
+import api from "../../services/api";
 
 import { Feather as Icon } from "@expo/vector-icons";
 
+interface Item {
+	id: string,
+	title: string,
+	image_url: string
+}
 
 const Points = () => {
 	/*Rotas*/
@@ -17,6 +23,19 @@ const Points = () => {
 	function handleNavigateToDetail () {
 		navigation.navigate("Detail");
 	}
+
+	/*state, setState*/
+	const [items, setItems] = useState<Item[]>([]); /*Sempre que armazenamos um vetor em um estado, precisamos informar o formato do vetor.*/
+
+	useEffect(() => {
+		api.get("items").then( response => {
+			setItems(response.data);
+		}, reason => {
+			console.error("Failed to fetch items from our React JS API. Is the server running?");
+			console.error(reason);
+			setItems([{id: "ERR", title:"Network Error", image_url:""}])
+		})
+	}, []);
 
 	return (
 		<>
@@ -68,30 +87,13 @@ const Points = () => {
 					{/*horizontal é para poder scrollar a lista; o segundo é para não aparecer a barrinha;
 						contentContainerStyle é para tratar as propriedades como parte do conteúdo,
 						para arrumar os cantinhos (no meu celular parece ok sem isso, tho).*/}
-					<TouchableOpacity style={styles.item} onPress={ () => {}}>
-						<SvgUri width={42} height={42} uri={"http://192.168.100.28:3333/uploads/lampadas.svg"} />
-						<Text style={styles.itemTitle}>Lâmpadas</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.item} onPress={ () => {}}>
-						<SvgUri width={42} height={42} uri={"http://192.168.100.28:3333/uploads/lampadas.svg"} />
-						<Text style={styles.itemTitle}>Lâmpadas</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.item} onPress={ () => {}}>
-						<SvgUri width={42} height={42} uri={"http://192.168.100.28:3333/uploads/lampadas.svg"} />
-						<Text style={styles.itemTitle}>Lâmpadas</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.item} onPress={ () => {}}>
-						<SvgUri width={42} height={42} uri={"http://192.168.100.28:3333/uploads/lampadas.svg"} />
-						<Text style={styles.itemTitle}>Lâmpadas</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.item} onPress={ () => {}}>
-						<SvgUri width={42} height={42} uri={"http://192.168.100.28:3333/uploads/lampadas.svg"} />
-						<Text style={styles.itemTitle}>Lâmpadas</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.item} onPress={ () => {}}>
-						<SvgUri width={42} height={42} uri={"http://192.168.100.28:3333/uploads/lampadas.svg"} />
-						<Text style={styles.itemTitle}>Lâmpadas</Text>
-					</TouchableOpacity>
+					{items.map( item => (
+						<TouchableOpacity key={String(item.id)} style={styles.item} onPress={ () => {}}>
+						{/*Sempre precisamos colocar key toda vez que mexemos com arrays no react! */}
+						<SvgUri width={42} height={42} uri={item.image_url} />
+						<Text style={styles.itemTitle}>{item.title}</Text>
+						</TouchableOpacity>
+					))}
 						
 				</ScrollView>
 			</View>
