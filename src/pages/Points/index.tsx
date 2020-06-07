@@ -9,7 +9,7 @@ import api from "../../services/api";
 import { Feather as Icon } from "@expo/vector-icons";
 
 interface Item {
-	id: string,
+	id: number,
 	title: string,
 	image_url: string
 }
@@ -24,8 +24,23 @@ const Points = () => {
 		navigation.navigate("Detail");
 	}
 
+	/*Atualiza o item selecionado. */
+	function handleSelectedItem (id: number) {
+		const alreadySelectedThis = selectedItems.includes(id);
+
+		if (alreadySelectedThis) {
+			const filteredItems = selectedItems.filter( item => (item !== id) );
+			setSelectedItems(filteredItems);
+
+		} else {
+			setSelectedItems([ ...selectedItems, id ]); //spread operator 2 op pls nerf
+			/*Olha como o spread operator permite que agente reutilize o vetor! */
+		}
+	}
+
 	/*state, setState*/
 	const [items, setItems] = useState<Item[]>([]); /*Sempre que armazenamos um vetor em um estado, precisamos informar o formato do vetor.*/
+	const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
 	useEffect(() => {
 		api.get("items").then( response => {
@@ -33,7 +48,7 @@ const Points = () => {
 		}, reason => {
 			console.error("Failed to fetch items from our React JS API. Is the server running?");
 			console.error(reason);
-			setItems([{id: "ERR", title:"Network Error", image_url:""}])
+			setItems([{id: -1, title:"Network Error", image_url:""}])
 		})
 	}, []);
 
@@ -88,7 +103,16 @@ const Points = () => {
 						contentContainerStyle é para tratar as propriedades como parte do conteúdo,
 						para arrumar os cantinhos (no meu celular parece ok sem isso, tho).*/}
 					{items.map( item => (
-						<TouchableOpacity key={String(item.id)} style={styles.item} onPress={ () => {}}>
+						<TouchableOpacity 
+							key={String(item.id)} 
+							style={[
+								styles.item,
+								selectedItems.includes(item.id) ? styles.selectedItem : {}
+							]}
+							/*Array de estilos com operador ternário no meio... :) */
+							activeOpacity={0.6}
+							onPress={ () => handleSelectedItem(item.id)}
+						>
 						{/*Sempre precisamos colocar key toda vez que mexemos com arrays no react! */}
 						<SvgUri width={42} height={42} uri={item.image_url} />
 						<Text style={styles.itemTitle}>{item.title}</Text>
