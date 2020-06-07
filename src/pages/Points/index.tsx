@@ -14,6 +14,14 @@ interface Item {
 	title: string,
 	image_url: string
 }
+interface Point {
+	id: number;
+	name: string;
+	image: string;
+	latitude: number;
+	longitude: number;
+}
+/*Só as informações que vamos utilizar! */
 
 const Points = () => {
 	/*Rotas*/
@@ -21,8 +29,8 @@ const Points = () => {
 	function handleNavigateBack () {
 		navigation.goBack();
 	}
-	function handleNavigateToDetail () {
-		navigation.navigate("Detail");
+	function handleNavigateToDetail (id: number) {
+		navigation.navigate("Detail",{ point_id: id }); /*o segundo parâmetro é para passar coisas para a próxima rota. */
 	}
 
 	/*Atualiza o item selecionado. */
@@ -41,6 +49,7 @@ const Points = () => {
 
 	/*state, setState*/
 	const [items, setItems] = useState<Item[]>([]); /*Sempre que armazenamos um vetor em um estado, precisamos informar o formato do vetor.*/
+	const [points, setPoints] = useState<Point[]>([]);
 	const [selectedItems, setSelectedItems] = useState<number[]>([]);
 	const [initialPosition, setinitialPosition] = useState<[number, number]>([0, 0]);
 
@@ -66,11 +75,23 @@ const Points = () => {
 			const location = await Location.getCurrentPositionAsync();
 
 			const { latitude, longitude } = location.coords;
-			console.log([latitude, longitude]);
 			setinitialPosition([latitude, longitude]);
 		}
 
 		loadPosition();
+	}, [])
+
+	/*Fazemos uma listagem filtrada de pontos com aqueles query parameters */
+	useEffect( () => {
+		api.get("points", {
+			params: {
+				cidade: "São Paulo",
+				estado: "SP",
+				items: [1, 3, 6]
+			}
+		}).then( response => {
+			setPoints(response.data);
+		})
 	}, [])
 
 	return (
@@ -85,34 +106,41 @@ const Points = () => {
 				<Text style={styles.description}>Encontre no mapa um ponto de coleta.</Text>
 
 				<View style={styles.mapContainer}>
-					{/*O borderRadius só funciona para View.*/}
-					<MapView 
+					{/*O borderRadius só funciona para View.
+					Aqui fazemos uma renderização condicional.
+					funciona assim: */}
+					{ initialPosition[0] !== 0 && (
+						<MapView 
 						style={styles.map}
 						loadingEnabled={initialPosition[0] == 0}
 						initialRegion={{ 
 							latitude: initialPosition[0],
 							longitude: initialPosition[1],
-							latitudeDelta: 0.020,
-							longitudeDelta: 0.020
+							latitudeDelta: 0.009,
+							longitudeDelta: 0.009
 						 }}
 					>
-						<Marker 
+						{points.map( point => (
+						<Marker
+							key={String(point.id)}
 							style={styles.mapMarker}
-							onPress={handleNavigateToDetail}
+							onPress={ () => handleNavigateToDetail(point.id)}
 							coordinate={{
-								latitude: -23.5592411,
-								longitude: -46.7318941,
+								latitude: point.latitude,
+								longitude: point.longitude,
 							}} 
 						>
 							<View style={styles.mapMarkerContainer}>
 								<Image 
 									style={styles.mapMarkerImage} 
-									source={{ uri:"https://images.unsplash.com/photo-1514425263458-109317cc1321?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60" }}
+									source={{ uri: point.image}}
 								/>
-								<Text style={styles.mapMarkerTitle}>Mercado</Text>
+								<Text style={styles.mapMarkerTitle}>{point.name}</Text>
 							</View>
 						</Marker>
+						))}
 					</MapView>
+					)}
 				</View>
 			</View>
 			<View style={styles.itemsContainer}>
