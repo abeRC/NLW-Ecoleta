@@ -1,0 +1,14 @@
+#container {
+    display: flex;
+    flex: 1;
+    background-color: #145fff;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+}
+
+#text {
+    display: flex;
+    color: #ffb941;
+    font-size: 60;
+}

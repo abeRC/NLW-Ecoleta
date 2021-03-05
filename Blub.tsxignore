@@ -1,0 +1,31 @@
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+
+export default function Blub() {
+	return (
+		<Text style={styles.text}>TEXT
+			<Text style={styles.container}>
+					<Text>CONTAINS</Text>
+						CONTAINERS WITH
+					<Text style={styles.text}>TEXT</Text>
+			</Text>
+		</Text>
+	);
+}
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: '#145fff',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontStyle: "italic",
+	},
+
+	text: {
+		color: '#ffb941',
+		fontWeight: "bold",
+		fontSize: 60,
+	},
+});
