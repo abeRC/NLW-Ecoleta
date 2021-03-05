@@ -1,8 +1,6 @@
-# NLW-2020-mobile
-Código da versão mobile do projeto da NLW 2020 (Ecoleta)
-Usamos TypeScript, React Native, Expo,...
+# Ecoleta
 
-Getting started:
-```
-expo init mobile
-```
+##### Código-fonte d(as 3 partes d)o projeto da NLW 2020.
+
+*Fonte da gambiarra de históricos: [https://stackoverflow.com/questions/13040958/merge-two-git-repositories-without-breaking-file-history](https://stackoverflow.com/questions/13040958/merge-two-git-repositories-without-breaking-file-history)*
+
